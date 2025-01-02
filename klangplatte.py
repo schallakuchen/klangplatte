@@ -30,21 +30,21 @@ def index():
         categories[category] = [f for f in files if os.path.isfile(os.path.join(root, f))]
     return render_template('index.html', categories=categories)
 
-@app.route('/play/<category>/<sound_file>')
+from flask import jsonify
+
+@app.route('/play/<category>/<sound_file>', methods=['POST'])
 def play_sound(category, sound_file):
     sound_path = os.path.join(app.config['UPLOAD_FOLDER'], category, sound_file)
     if not os.path.commonpath([os.path.abspath(app.config['UPLOAD_FOLDER']), os.path.abspath(sound_path)]) == os.path.abspath(app.config['UPLOAD_FOLDER']):
-        flash("Invalid path.")
-        logging.warning(f"Invalid access attempt: {category}/{sound_file}")
-        return redirect(url_for('index'))
+        return jsonify({'status': 'error', 'message': 'Invalid path.'}), 400
 
     if os.path.exists(sound_path):
         pygame.mixer.music.load(sound_path)
         pygame.mixer.music.play()
+        return jsonify({'status': 'success', 'message': f"Playing '{sound_file}'."})
     else:
-        flash(f"The sound '{sound_file}' in category '{category}' is no longer available.")
-        logging.info(f"Missing sound file attempted: {category}/{sound_file}")
-    return redirect(url_for('index'))
+        return jsonify({'status': 'error', 'message': f"The sound '{sound_file}' is no longer available."}), 404
+
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
