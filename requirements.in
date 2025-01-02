@@ -1,3 +1,4 @@
 flask
 playsound
 pygame
+mutagen
