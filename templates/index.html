@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soundboard</title>
+</head>
+<body>
+    <h1>Soundboard</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label for="category">Category:</label>
+        <input type="text" name="category" placeholder="Enter category" required>
+        <input type="file" name="file" required>
+        <button type="submit">Upload</button>
+    </form>
+    <hr>
+    {% for category, sounds in categories.items() %}
+        <h2>Category: {{ category }}</h2>
+        <ul>
+            {% for sound in sounds %}
+                <li>
+                    {{ sound }}
+                    - <a href="/play/{{ category }}/{{ sound }}">Play</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+</body>
+</html>
