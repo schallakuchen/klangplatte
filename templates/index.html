@@ -3,39 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soundboard</title>
+    <title>Klangplatte</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .category-header {
+            cursor: pointer;
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .category-header:hover {
+            background-color: #e2e6ea;
+        }
+        .category-icon {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+        .category-icon.collapsed {
+            transform: rotate(90deg);
+        }
+        .sound-button {
+            display: inline-block;
+            margin: 5px;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .sound-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <div class="container py-4">
-        <h1 class="text-center mb-4">Soundboard</h1>
-        <form action="/upload" method="post" enctype="multipart/form-data" class="mb-4">
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <input type="text" name="category" class="form-control" placeholder="Enter category" required>
+        <h1 class="text-center mb-4">Klangplatte</h1>
+        
+        <!-- Upload Section -->
+        <section class="mb-5">
+            <h2>Upload Sound</h2>
+            <form action="/upload" method="post" enctype="multipart/form-data" class="mb-3">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" name="category" class="form-control" placeholder="Enter category" required>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="file" name="file" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary w-100">Upload</button>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <input type="file" name="file" class="form-control" required>
+            </form>
+        </section>
+        
+        <!-- Play Section -->
+        <section>
+            <h2>Play Sounds</h2>
+            {% for category, sounds in categories.items() %}
+                <div class="mb-4">
+                    <div class="category-header" data-bs-toggle="collapse" data-bs-target="#collapse-{{ loop.index }}" aria-expanded="true" aria-controls="collapse-{{ loop.index }}">
+                        {{ category }}
+                        <span class="category-icon collapsed">&#9654;</span>
+                    </div>
+                    <div id="collapse-{{ loop.index }}" class="collapse show">
+                        <div class="d-flex flex-wrap">
+                            {% for sound in sounds %}
+                                <a href="/play/{{ category }}/{{ sound }}" class="sound-button">{{ sound }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <button type="submit" class="btn btn-primary w-100">Upload</button>
-                </div>
-            </div>
-        </form>
-        <hr>
-        {% for category, sounds in categories.items() %}
-            <div class="mb-4">
-                <h2 class="text-secondary">{{ category }}</h2>
-                <ul class="list-group">
-                    {% for sound in sounds %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ sound }}
-                            <a href="/play/{{ category }}/{{ sound }}" class="btn btn-sm btn-success">Play</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </section>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
