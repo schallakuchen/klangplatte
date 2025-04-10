@@ -13,3 +13,6 @@ dist/
 
 # Other
 sounds/
+
+# FFMPEG
+klangplatte/audio/ffmpeg/
